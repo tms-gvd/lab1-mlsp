@@ -119,7 +119,8 @@ def prox_l21norm(x: torch.Tensor, lam=1.0, dim=0):
     if lam <= 0:
         raise ValueError("`lam` should be positive.")
     # TODO: fill in the computation
-    return torch.zeros(x.shape)
+    prox = (1-lam/torch.max(torch.sum(x.pow(2), axis=dim).sqrt(), lam*torch.ones_like(x[0])))*x
+    return prox
 
 
 @torch.no_grad
