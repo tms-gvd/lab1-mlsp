@@ -110,15 +110,15 @@ def generate_2d_cs_data(x: torch.Tensor, percent: float, isnr: float, rng):
     # * generate observations
     # TODO: to complete definition of sig, the standard deviation of the noise
     clean_observations = sensing_operator.forward(x)
-    
-    Psig = torch.sum(torch.abs(clean_observations).pow(2))/n_measurements
+    Psig = torch.sum(torch.abs(clean_observations).pow(2))/(2*n_measurements)
     sig = torch.sqrt(Psig/(10**(isnr/10)))
-
+    print(sig, Psig)
     # Generate real and imaginary noise
     real_noise = torch.randn(clean_observations.shape, dtype=torch.float) * sig
     imag_noise = torch.randn(clean_observations.shape, dtype=torch.float) * sig
     # Combine real and imaginary noise into complex noise
     complex_noise = torch.complex(real_noise, imag_noise)
+    print(complex_noise)
     observations = clean_observations + complex_noise
 
     return observations, sensing_operator, sig, clean_observations
