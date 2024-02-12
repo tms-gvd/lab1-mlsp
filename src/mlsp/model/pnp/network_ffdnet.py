@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     x = torch.randn((2, 1, 240, 240))
     sigma = torch.randn(2, 1, 1, 1)
-    x = model(x, sigma)
+    x_2 = model(x, sigma)
     print(x.shape)
 
     #  run models/network_ffdnet.py
