@@ -94,8 +94,9 @@ def tv(x):
     float
         total variation evaluated in ``x``.
     """
-    # TODO: fill in the function to evaluate the TV function
-    return torch.zeros((1,))
+    grads = gradient_2d(x)
+    
+    return l21_norm(grads)
 
 
 if __name__ == "__main__":

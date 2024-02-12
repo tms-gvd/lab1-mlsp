@@ -2,6 +2,7 @@
 operator involved when decomposing the operator in the Fourier domain ADMM
 splitting (see tutorial 1).
 """
+
 # author: pthouvenin (pierre-antoine.thouvenin@centralelille.fr)
 
 import torch
@@ -34,10 +35,12 @@ def gradient_2d(x: torch.Tensor) -> torch.Tensor:
 
     # vertical differences
     uv = torch.zeros(x.shape)
-    uv[:-1, :] = x[1:, :] - x[:-1, :]
+    uv[:-1, :] = x[1:, :]
+    uv = uv - x
     # horizontal differences
     uh = torch.zeros(x.shape)
-    uh[:, :-1] = x[:, 1:] - x[:, :-1]
+    uh[:, :-1] = x[:, 1:]
+    uh = uh - x
 
     return torch.stack((uv, uh), dim=0)
 
@@ -63,7 +66,17 @@ def gradient_2d_adjoint(y: torch.Tensor) -> torch.Tensor:
         Adjoint of the 2d gradient operator, evaluated in :math:`\mathbf{y}`.
     """
     # TODO: fill-in computations
-    return torch.zeros(y.shape[1:])
+    uv, uh = y[0], y[1]
+    adj = torch.zeros_like(uv)
+    h, w = uv.shape
+
+    for i in range(uv.shape[0] - 1, -1, -1):
+        if i == h - 1:
+            adj[i] = -uv[i]
+        else:
+            adj[i] = -uv[i] + adj[i + 1]
+
+    return adj
 
 
 class DiscreteGradient(LinearOperator):
